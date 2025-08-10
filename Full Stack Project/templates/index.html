@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EV Battery Swap Locator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Find a Battery Swap Station</h1>
+  <form id="search-form">
+    <input type="text" id="location" placeholder="Enter city or pincode" required>
+    <button type="submit">Search</button>
+  </form>
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById('search-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const location = document.getElementById('location').value;
+      const res = await fetch(`/search?query=${location}`);
+      const data = await res.json();
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+      if(data.length === 0) {
+        results.innerHTML = '<p>No stations found.</p>';
+      } else {
+        data.forEach(station => {
+          results.innerHTML += `<div class="card">
+            <h3>${station.name}</h3>
+            <p>${station.address}</p>
+            <p>Battery Types: ${station.battery_types}</p>
+          </div>`;
+        });
+      }
+    });
+  </script>
+</body>
+</html>
